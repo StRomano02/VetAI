@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'screens/welcome_screen.dart';
-import 'screens/home_screen.dart';
-//import 'screens/login_screen.dart';
+import 'screens/client_home_screen.dart';
+import 'screens/vet_home_screen.dart';
 
 void main() {
   runApp(
@@ -62,10 +62,15 @@ class MyApp extends StatelessWidget {
       home: Consumer<AuthProvider>(
         builder: (context, auth, child) {
           if (auth.isAuthenticated) {
-            return HomeScreen(); // Utente già loggato
-          } else {
-            return WelcomeScreen(); // Utente non loggato
+            // Controlla il ruolo salvato
+            final role = auth.userData?['role'];
+            if (role == 'vet') {
+              return VetHomeScreen(); // Home per il veterinario
+            } else if (role == 'client') {
+              return ClientHomeScreen(); // Home per il cliente
+            }
           }
+          return WelcomeScreen(); // Utente non loggato
         },
       ),
     );

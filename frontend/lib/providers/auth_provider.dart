@@ -6,44 +6,59 @@ class AuthProvider extends ChangeNotifier {
   Map<String, String>? _userData; // Dati del profilo utente
 
   String? get token => _token;
-  Map<String, String>? get userData =>
-      _userData; // Getter per i dati del profilo
+  Map<String, String>? get userData => _userData;
   bool get isAuthenticated => _token != null;
 
   // Login dell'utente
-  Future<void> login(String username, String password) async {
-    // Simula una chiamata API al backend
-    if (username == "test" && password == "password") {
-      _token = "mock_token"; // Simula un token
+  Future<String> login(String username, String password) async {
+    // Simula una chiamata API al backend con username e password
+    if (username == "vet" && password == "password") {
+      _token = "mock_token_vet";
       _userData = {
         'username': username,
-        'email': 'test@example.com',
-      }; // Simula i dati utente ricevuti dal backend
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', _token!);
-      await prefs.setString('username', _userData!['username']!);
-      await prefs.setString('email', _userData!['email']!);
-
-      notifyListeners();
+        'email': 'vet@example.com',
+        'role': 'vet',
+      };
+    } else if (username == "client" && password == "password") {
+      _token = "mock_token_client";
+      _userData = {
+        'username': username,
+        'email': 'client@example.com',
+        'role': 'client',
+      };
     } else {
       throw Exception("Credenziali non valide");
     }
-  }
 
-  // Registrazione utente (simile al login)
-  Future<void> signUp(String username, String email, String password) async {
-    // Simula una chiamata API al backend
-    _token = "mock_token";
-    _userData = {
-      'username': username,
-      'email': email,
-    };
-
+    // Salva il token e i dati utente nelle SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', _token!);
     await prefs.setString('username', _userData!['username']!);
     await prefs.setString('email', _userData!['email']!);
+    await prefs.setString('role', _userData!['role']!);
+
+    notifyListeners();
+    return _userData!['role']!; // Ritorna il ruolo dell'utente
+  }
+
+  // Registrazione utente (simile al login)
+  // Aggiungi un nuovo parametro per il ruolo
+  Future<void> signUp(
+      String username, String email, String password, String role) async {
+    // Simula una chiamata API al backend per registrare l'utente
+    _token = "mock_token";
+    _userData = {
+      'username': username,
+      'email': email,
+      'role': role, // Memorizza il ruolo scelto
+    };
+
+    // Salva i dati nelle SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', _token!);
+    await prefs.setString('username', _userData!['username']!);
+    await prefs.setString('email', _userData!['email']!);
+    await prefs.setString('role', role); // Salva anche il ruolo
 
     notifyListeners();
   }
@@ -67,6 +82,7 @@ class AuthProvider extends ChangeNotifier {
       _userData = {
         'username': prefs.getString('username')!,
         'email': prefs.getString('email')!,
+        'role': prefs.getString('role')!,
       };
     }
     notifyListeners();

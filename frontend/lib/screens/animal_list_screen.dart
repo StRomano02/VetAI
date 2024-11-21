@@ -22,6 +22,10 @@ class AnimalListPage extends StatelessWidget {
         {'name': 'Tartaruga', 'image': 'assets/images/turtle.png'},
         {'name': 'Coniglio', 'image': 'assets/images/rabbit.png'},
       ],
+      'Cose': [
+        {'name': 'lazio', 'image': 'assets/images/turtle.png'},
+        {'name': 'roma', 'image': 'assets/images/rabbit.png'},
+      ]
     };
 
     final animals = animalData[category] ?? [];
