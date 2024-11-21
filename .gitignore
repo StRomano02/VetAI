@@ -1,10 +1,7 @@
-# Ambiente virtuale Python
 env/
 
-# Cartelle di Flutter generate automaticamente
 frontend/build/
 frontend/ios/Flutter/
 frontend/android/.gradle/
 
-# File temporanei di sistema
 .DS_Store

@@ -30,6 +30,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.1.2         # Per comunicare con il backend
+  provider: ^6.0.5       # Per gestire lo stato globale
+  shared_preferences: ^2.0.15  # Per salvare dati localmente
+  flutter_typeahead: ^4.0.0  # Per la barra di ricerca con suggerimenti
+  cached_network_image: ^3.2.3 # Per immagini ottimizzate
+  dio: ^5.0.0           # Alternativa avanzata per chiamate API
+  pull_to_refresh: ^2.0.0 # Per aggiornare liste scorrendo verso il basso
+  flutter_svg: ^1.1.6   # Per utilizzare icone SVG
+  fl_chart: ^0.40.0     # Per visualizzare grafici
 
 
   # The following adds the Cupertino Icons font to your application.
