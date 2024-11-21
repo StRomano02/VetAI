@@ -26,7 +26,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login fallito: ${error.toString()}')),
+        SnackBar(
+          content: Text('Errore: Username o password non validi'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       setState(() {
@@ -55,6 +58,18 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Torna alla Welcome Page
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.grey, // Colore del bottone "Indietro"
+                  ),
+                  child: Text('Indietro alla Welcome Page'),
+                ),
+                SizedBox(height: 20), // Spazio tra il bottone e il form
+
                 // Logo
                 SizedBox(
                   height: 100,
