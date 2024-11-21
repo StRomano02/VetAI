@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import 'providers/auth_provider.dart';
+import 'package:provider/provider.dart';
+import 'screens/welcome_screen.dart';
 import 'screens/home_screen.dart';
+//import 'screens/login_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) =>
+                AuthProvider()..checkLoginStatus()), // Inizializza lo stato
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -10,54 +23,51 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Vet App',
+      title: 'VetAI',
       theme: ThemeData(
-        primarySwatch: Colors.lightBlue, // Colore principale
-        scaffoldBackgroundColor: Colors.blue[50], // Sfondo leggero
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.lightBlue,
+          primarySwatch: Colors.indigo, // Tavolozza indaco (più elegante)
         ).copyWith(
-          secondary: Colors.blueAccent, // Colore secondario
+          primary: Color(0xFF3949AB), // Blu elegante, meno scuro
+          secondary: Color(0xFF5C6BC0), // Colore secondario
         ),
-        textTheme: TextTheme(
-          displayLarge: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue[900]), // Titoli
-          bodyLarge:
-              TextStyle(fontSize: 16, color: Colors.black87), // Testo normale
-        ),
+        scaffoldBackgroundColor: Colors.white, // Sfondo bianco
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.lightBlue, // Barra superiore
+          backgroundColor: Color(0xFF3949AB),
           titleTextStyle: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.lightBlue, // Colore pulsante
-            foregroundColor: Colors.white, // Colore testo pulsante
+            backgroundColor: Color(0xFF3949AB),
+            foregroundColor: Colors.white,
             textStyle: TextStyle(fontSize: 18),
           ),
         ),
+        textTheme: TextTheme(
+          headlineMedium: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF3949AB),
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
+          ),
+        ),
       ),
-      home: HomeScreen(),
+      home: Consumer<AuthProvider>(
+        builder: (context, auth, child) {
+          if (auth.isAuthenticated) {
+            return HomeScreen(); // Utente già loggato
+          } else {
+            return WelcomeScreen(); // Utente non loggato
+          }
+        },
+      ),
     );
   }
 }
-
-// class HomeScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Home Screen'),
-//       ),
-//       body: Center(
-//         child: ElevatedButton(
-//           onPressed: () {},
-//           child: Text('Premi qui'),
-//         ),
-//       ),
-//     );
-//   }
-//}
