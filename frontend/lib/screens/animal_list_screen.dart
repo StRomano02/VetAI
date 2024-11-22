@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'animal_detail_screen.dart';
+import 'add_animal_screen.dart'; // Aggiungi la schermata per aggiungere animali
 
 class AnimalListPage extends StatelessWidget {
   final String category;
@@ -23,8 +24,8 @@ class AnimalListPage extends StatelessWidget {
         {'name': 'Coniglio', 'image': 'assets/images/rabbit.png'},
       ],
       'Cose': [
-        {'name': 'lazio', 'image': 'assets/images/turtle.png'},
-        {'name': 'roma', 'image': 'assets/images/rabbit.png'},
+        {'name': 'shakina', 'image': 'assets/images/shakina.jpeg'},
+        {'name': 'nonsichiama', 'image': 'assets/images/gattina.jpeg'},
       ]
     };
 
@@ -32,7 +33,7 @@ class AnimalListPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Animali: $category'),
+        title: Text('Animali della categoria "$category"'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -52,8 +53,10 @@ class AnimalListPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        AnimalDetailPage(name: animal['name']!),
+                    builder: (context) => AnimalDetailPage(
+                      name: animal['name']!,
+                      imagePath: animal['image']!,
+                    ),
                   ),
                 );
               },
@@ -63,7 +66,10 @@ class AnimalListPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Aggiungi un nuovo animale
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddAnimalScreen()),
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -91,15 +97,20 @@ class AnimalCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              imagePath,
-              height: 80,
-              fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                imagePath,
+                height: 100,
+                width: 100,
+                fit: BoxFit.cover,
+              ),
             ),
             SizedBox(height: 10),
             Text(
               name,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
           ],
         ),

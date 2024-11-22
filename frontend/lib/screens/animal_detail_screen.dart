@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class AnimalDetailPage extends StatelessWidget {
   final String name;
+  final String imagePath;
 
-  const AnimalDetailPage({required this.name});
+  // Costruttore aggiornato
+  AnimalDetailPage({required this.name, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -11,16 +13,18 @@ class AnimalDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(name),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/images/dog1.png', // Immagine dell'animale (da sostituire con dinamico)
-              height: 200,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12), // Angoli arrotondati
+              child: Image.asset(
+                imagePath, // Visualizza l'immagine
+                height: 200,
+                width: 200,
+                fit: BoxFit.cover,
+              ),
             ),
             SizedBox(height: 20),
             Text(

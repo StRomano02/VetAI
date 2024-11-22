@@ -168,19 +168,58 @@ class _VetHomeScreenState extends State<VetHomeScreen>
                       ),
                       SizedBox(height: 20),
 
-                      // Bottone per "Accedi al tuo rifugio"
-                      ElevatedButton(
-                        onPressed: () {
-                          // Azione: Naviga alla pagina del rifugio dell'utente
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ShelterPage(shelterName: 'Il tuo rifugio'),
+                      Center(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ShelterPage(
+                                      shelterName: 'Il tuo rifugio')),
+                            );
+                          },
+                          child: Container(
+                            height:
+                                120, // Altezza e larghezza per il formato quadrato
+                            width: 120,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 30, 65,
+                                  130), // Un verde elegante che si abbina bene
+                              borderRadius: BorderRadius.circular(
+                                  16), // Angoli arrotondati
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3), // Ombra verso il basso
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                        child: Text('Accedi al tuo rifugio'),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.pets, // Icona a forma di zampa
+                                  color: Colors.white,
+                                  size: 50, // Dimensione più grande per l'icona
+                                ),
+                                SizedBox(
+                                    height: 8), // Spazio tra l'icona e il testo
+                                Text(
+                                  "Il tuo rifugio",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign
+                                      .center, // Allineamento al centro
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

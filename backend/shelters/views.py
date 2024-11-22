@@ -26,3 +26,20 @@ class AnimalViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return Animal.objects.filter(shelter__owner=self.request.user)
         return Animal.objects.none()
+    
+# Backend - API per aggiungere un animale
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .models import Animal
+from .serializers import AnimalSerializer
+
+class AddAnimalAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = AnimalSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)

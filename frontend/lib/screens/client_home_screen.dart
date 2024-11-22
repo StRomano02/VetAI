@@ -167,17 +167,61 @@ class _ClientHomeScreenState extends State<ClientHomeScreen>
                           }
                         },
                       ),
+
                       SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    AnimalListPage(category: 'Cose')),
-                          );
-                        },
-                        child: Text('I miei animali'),
+
+                      Center(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AnimalListPage(category: 'Cose')),
+                            );
+                          },
+                          child: Container(
+                            height:
+                                120, // Altezza e larghezza per il formato quadrato
+                            width: 120,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 30, 65,
+                                  130), // Un verde elegante che si abbina bene
+                              borderRadius: BorderRadius.circular(
+                                  16), // Angoli arrotondati
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3), // Ombra verso il basso
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.pets, // Icona a forma di zampa
+                                  color: Colors.white,
+                                  size: 50, // Dimensione più grande per l'icona
+                                ),
+                                SizedBox(
+                                    height: 8), // Spazio tra l'icona e il testo
+                                Text(
+                                  "I miei animali",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign
+                                      .center, // Allineamento al centro
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

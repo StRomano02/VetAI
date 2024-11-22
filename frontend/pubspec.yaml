@@ -39,6 +39,7 @@ dependencies:
   pull_to_refresh: ^2.0.0 # Per aggiornare liste scorrendo verso il basso
   flutter_svg: ^1.1.6   # Per utilizzare icone SVG
   fl_chart: ^0.40.0     # Per visualizzare grafici
+  font_awesome_flutter: ^10.2.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -62,7 +63,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/images/logo.png
+    - assets/images/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
