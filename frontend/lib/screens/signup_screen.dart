@@ -113,7 +113,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(
-                        value == 'client' ? 'Cliente' : 'Veterinario',
+                        value == 'client'
+                            ? 'Cerco un animale per la mia casa'
+                            : 'Cerco una casa per i miei animali',
                       ),
                     );
                   }).toList(),
