@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'animal_list_screen.dart';
 import 'add_animal_screen.dart';
 import 'vet_profile_screen.dart';
-
-final List<Map<String, String?>> animals = [
-  {'name': 'Shaky', 'status': 'In cerca di casa', 'category': 'Cani'},
-  {'name': 'Sophie', 'status': 'In cura', 'category': 'Gatti'},
-  {'name': 'Squalo', 'status': 'In cerca di casa', 'category': 'Altri'},
-  {'name': 'Tosca', 'status': 'In cura', 'category': 'Cani'},
-  {'name': 'Domi', 'status': 'In cerca di casa', 'category': 'Gatti'},
-];
+import 'animal_detail_screen.dart';
+import '../models/animal.dart';
+import '../models/animal_data.dart';
 
 class VetHomeScreen extends StatefulWidget {
   @override
@@ -17,30 +12,29 @@ class VetHomeScreen extends StatefulWidget {
 }
 
 class _VetHomeScreenState extends State<VetHomeScreen> {
-  int _selectedIndex = 0; // Indice iniziale
+  int _selectedIndex = 0;
 
-  // Lista delle schermate
   final List<Widget> _pages = [
-    VetHomeScreenContent(), // Schermata principale
-    ClinicPage(), // Placeholder per Clinica
-    MessagesPage(), // Placeholder per Messaggi
-    StorePage(), // Placeholder per Magazzino
-    ProfileScreen(), // Schermata Profilo
+    VetHomeScreenContent(),
+    ClinicPage(),
+    MessagesPage(),
+    StorePage(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // Cambia schermata
+      _selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex], // Mostra la schermata selezionata
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped, // Cambia schermata al tocco
+        onTap: _onItemTapped,
         selectedItemColor: Colors.green,
         unselectedItemColor: Colors.grey,
         showSelectedLabels: true,
@@ -78,7 +72,7 @@ class VetHomeScreenContent extends StatelessWidget {
     'In cura',
     'Cani',
     'Gatti',
-    'Altri'
+    'Altri',
   ];
 
   @override
@@ -90,30 +84,22 @@ class VetHomeScreenContent extends StatelessWidget {
         title: Text(
           'VetAI',
           style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
         ),
         centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(Icons.notifications, color: Colors.black),
-            onPressed: () {
-              // Azione per notifiche
-            },
+            onPressed: () {},
           ),
         ],
       ),
       body: Column(
         children: [
-          // Barra di ricerca
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
-              onChanged: (value) {
-                // Logica per aggiornare la ricerca
-              },
+              onChanged: (value) {},
               decoration: InputDecoration(
                 hintText: 'Cerca un animale',
                 prefixIcon: Icon(Icons.search),
@@ -123,20 +109,46 @@ class VetHomeScreenContent extends StatelessWidget {
               ),
             ),
           ),
-          // Lista delle categorie
           Expanded(
             child: ListView(
               children: _categories.map((category) {
+                final filteredAnimals = exampleAnimals.where((animal) {
+                  // Un animale appartiene alla categoria se lo `status` corrisponde
+                  // oppure se la specie corrisponde (mappata alla categoria)
+                  String mapSpeciesToCategory(String species) {
+                    if (['Cane', 'Cagna'].contains(species)) return 'Cani';
+                    if (['Gatto', 'Gattina'].contains(species)) return 'Gatti';
+                    return 'Altri';
+                  }
+
+                  final bool isInStatusCategory = animal.status == category;
+                  final bool isInSpeciesCategory =
+                      mapSpeciesToCategory(animal.species) == category;
+
+                  return isInStatusCategory || isInSpeciesCategory;
+                }).toList();
+
+                // Ritorna una sezione con il titolo, animali e widget per aggiungerne di nuovi
                 return CategorySection(
                   title: category,
-                  animals: animals.where((animal) {
-                    if (category == 'In cerca di casa' ||
-                        category == 'In cura') {
-                      return animal['status'] == category;
-                    } else {
-                      return animal['category'] == category;
-                    }
-                  }).toList(),
+                  animals: filteredAnimals,
+                  onAddAnimal: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddAnimalScreen(),
+                      ),
+                    );
+                  },
+                  onViewAll: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AnimalListScreen(category: category),
+                      ),
+                    );
+                  },
                 );
               }).toList(),
             ),
@@ -150,19 +162,231 @@ class VetHomeScreenContent extends StatelessWidget {
             MaterialPageRoute(builder: (context) => AddAnimalScreen()),
           );
         },
-        backgroundColor: Colors.green,
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 }
 
-// Schermate placeholder per altre sezioni
+class CategorySection extends StatelessWidget {
+  final String title;
+  final List<Animal> animals;
+  final VoidCallback onAddAnimal;
+  final VoidCallback onViewAll;
+
+  CategorySection({
+    required this.title,
+    required this.animals,
+    required this.onAddAnimal,
+    required this.onViewAll,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              TextButton(
+                onPressed: onViewAll,
+                child: Text('Vedi tutto >'),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: SizedBox(
+            height: 150,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                ...animals.map((animal) {
+                  return AnimalCard(animal: animal);
+                }).toList(),
+                GestureDetector(
+                  onTap: onAddAnimal,
+                  child: Container(
+                    width: 160,
+                    margin: EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: const Color.fromARGB(255, 133, 121, 121),
+                          width: 2),
+                    ),
+                    child: Center(
+                      child: Icon(Icons.add,
+                          size: 40,
+                          color: const Color.fromARGB(255, 133, 121, 121)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 20),
+      ],
+    );
+  }
+}
+
+class AnimalCard extends StatelessWidget {
+  final Animal animal;
+
+  AnimalCard({required this.animal});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AnimalDetailScreen(animal: animal),
+          ),
+        );
+      },
+      child: Container(
+        width: 160,
+        margin: EdgeInsets.only(right: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 110,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(12)),
+                  ),
+                  child: animal.photoUrl != null && animal.photoUrl!.isNotEmpty
+                      ? Image.network(
+                          animal.photoUrl!,
+                          fit: BoxFit.cover,
+                          height: 110,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Mostra l'icona di fallback se il caricamento fallisce
+                            return Center(
+                              child: Icon(
+                                Icons.pets,
+                                size: 50,
+                                color: Colors.black,
+                              ),
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.pets,
+                            size: 50,
+                            color: Colors.black,
+                          ),
+                        ),
+                ),
+                if (animal.status != null)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: animal.status == "In cerca di casa"
+                            ? Colors.green
+                            : Colors.orange,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        animal.status!,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                animal.name,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ClinicPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Filtra gli animali con lo status "In cura"
+    final animalsInCare = exampleAnimals.where((animal) {
+      return animal.status == 'In cura';
+    }).toList();
+
     return Scaffold(
-      body: Center(child: Text('Clinica')),
+      appBar: AppBar(
+        title: Text('Animali in cura'),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      ),
+      body: animalsInCare.isNotEmpty
+          ? Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Due colonne
+                  crossAxisSpacing: 16.0, // Spazi tra le colonne
+                  mainAxisSpacing: 16.0, // Spazi tra le righe
+                  childAspectRatio: 1.2, // Rapporto larghezza/altezza
+                ),
+                itemCount: animalsInCare.length,
+                itemBuilder: (context, index) {
+                  final animal = animalsInCare[index];
+                  return AnimalCard(animal: animal); // Usa il widget AnimalCard
+                },
+              ),
+            )
+          : Center(
+              child: Text(
+                'Nessun animale in cura al momento.',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ),
     );
   }
 }
@@ -181,148 +405,6 @@ class StorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(child: Text('Magazzino')),
-    );
-  }
-}
-
-// Widget delle categorie
-class CategorySection extends StatelessWidget {
-  final String title;
-  final List<Map<String, String?>> animals;
-
-  CategorySection({required this.title, required this.animals});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AnimalListScreen(
-                        category: title,
-                        animals: animals,
-                      ),
-                    ),
-                  );
-                },
-                child: Text('Vedi tutto >'),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SizedBox(
-            height: 150,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: animals.map((animal) {
-                return AnimalCard(
-                  name: animal['name']!,
-                  status: animal['status'],
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-        SizedBox(height: 20),
-      ],
-    );
-  }
-}
-
-// Widget per le card degli animali
-class AnimalCard extends StatelessWidget {
-  final String name;
-  final String? status;
-
-  AnimalCard({required this.name, this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 160,
-      margin: EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 110,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.pets,
-                    size: 50,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ),
-              if (status != null)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: status == "In cerca di casa"
-                          ? Colors.green
-                          : Colors.orange,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      status!,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              name,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

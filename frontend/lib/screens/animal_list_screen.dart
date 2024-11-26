@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
+import 'animal_detail_screen.dart';
+import '../models/animal.dart';
+import '../models/animal_data.dart';
 
 class AnimalListScreen extends StatelessWidget {
-  final String category; // Categoria degli animali (es. "Cani")
-  final List<Map<String, String?>> animals; // Lista degli animali
+  final String category;
 
-  AnimalListScreen({required this.category, required this.animals});
+  AnimalListScreen({required this.category});
 
   @override
   Widget build(BuildContext context) {
-    // Filtra gli animali in base alla categoria o allo stato
-    final filteredAnimals = animals.where((animal) {
-      return animal['category'] == category || animal['status'] == category;
+    final filteredAnimals = exampleAnimals.where((animal) {
+      // Un animale appartiene alla categoria se lo `status` corrisponde
+      // oppure se la specie corrisponde (mappata alla categoria)
+      String mapSpeciesToCategory(String species) {
+        if (['Cane', 'Cagna'].contains(species)) return 'Cani';
+        if (['Gatto', 'Gattina'].contains(species)) return 'Gatti';
+        return 'Altri';
+      }
+
+      final bool isInStatusCategory = animal.status == category;
+      final bool isInSpeciesCategory =
+          mapSpeciesToCategory(animal.species) == category;
+
+      return isInStatusCategory || isInSpeciesCategory;
     }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('$category'), // Mostra la categoria nel titolo
+        title: Text('$category'),
         backgroundColor: Colors.white,
         elevation: 1,
         iconTheme: IconThemeData(color: Colors.black),
@@ -27,31 +40,27 @@ class AnimalListScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Torna alla schermata precedente
+            Navigator.pop(context);
           },
         ),
       ),
       body: filteredAnimals.isNotEmpty
           ? ListView.builder(
-              itemCount: filteredAnimals.length, // Numero di animali filtrati
+              itemCount: filteredAnimals.length,
               itemBuilder: (context, index) {
                 final animal = filteredAnimals[index];
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundColor: Colors.grey[300],
-                    backgroundImage: animal['imageUrl'] != null
-                        ? NetworkImage(animal['imageUrl']!)
+                    backgroundImage: animal.photoUrl != null
+                        ? NetworkImage(animal.photoUrl!)
                         : null,
-                    child: animal['imageUrl'] == null
-                        ? Icon(
-                            Icons.pets,
-                            color: Colors.grey[600],
-                          )
+                    child: animal.photoUrl == null
+                        ? Icon(Icons.pets, color: Colors.grey[600])
                         : null,
                   ),
-                  title: Text(animal['name'] ?? 'Senza nome'),
+                  title: Text(animal.name),
                   onTap: () {
-                    // Azione quando clicchi su un animale (es. vai ai dettagli)
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -64,35 +73,27 @@ class AnimalListScreen extends StatelessWidget {
               },
             )
           : Center(
-              child: Text(
-                'Nessun animale trovato in questa categoria.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Nessun animale trovato in questa categoria.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Logica per aggiungere un nuovo animale
+                    },
+                    icon: Icon(Icons.add),
+                    label: Text('Aggiungi Animale'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                  ),
+                ],
               ),
             ),
-    );
-  }
-}
-
-class AnimalDetailScreen extends StatelessWidget {
-  final Map<String, String?> animal;
-
-  AnimalDetailScreen({required this.animal});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(animal['name'] ?? 'Dettaglio Animale'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Center(
-        child: Text('Dettagli di ${animal['name']}'),
-      ),
     );
   }
 }
