@@ -1,119 +1,97 @@
 import 'package:flutter/material.dart';
-import 'animal_detail_screen.dart';
-import 'add_animal_screen.dart'; // Aggiungi la schermata per aggiungere animali
 
-class AnimalListPage extends StatelessWidget {
-  final String category;
+class AnimalListScreen extends StatelessWidget {
+  final String category; // Categoria degli animali (es. "Cani")
+  final List<Map<String, String?>> animals; // Lista degli animali
 
-  AnimalListPage({required this.category});
+  AnimalListScreen({required this.category, required this.animals});
 
   @override
   Widget build(BuildContext context) {
-    // Simulazione di dati diversi per ogni categoria
-    final Map<String, List<Map<String, String>>> animalData = {
-      'Cani': [
-        {'name': 'Rex', 'image': 'assets/images/dog1.png'},
-        {'name': 'Fido', 'image': 'assets/images/dog2.png'},
-      ],
-      'Gatti': [
-        {'name': 'Micio', 'image': 'assets/images/cat1.png'},
-        {'name': 'Pallino', 'image': 'assets/images/cat2.png'},
-      ],
-      'Altri': [
-        {'name': 'Tartaruga', 'image': 'assets/images/turtle.png'},
-        {'name': 'Coniglio', 'image': 'assets/images/rabbit.png'},
-      ],
-      'Cose': [
-        {'name': 'shakina', 'image': 'assets/images/shakina.jpeg'},
-        {'name': 'nonsichiama', 'image': 'assets/images/gattina.jpeg'},
-      ]
-    };
-
-    final animals = animalData[category] ?? [];
+    // Filtra gli animali in base alla categoria o allo stato
+    final filteredAnimals = animals.where((animal) {
+      return animal['category'] == category || animal['status'] == category;
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Animali della categoria "$category"'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-          ),
-          itemCount: animals.length,
-          itemBuilder: (context, index) {
-            final animal = animals[index];
-            return AnimalCard(
-              name: animal['name']!,
-              imagePath: animal['image']!,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AnimalDetailPage(
-                      name: animal['name']!,
-                      imagePath: animal['image']!,
-                    ),
-                  ),
-                );
-              },
-            );
+        title: Text('$category'), // Mostra la categoria nel titolo
+        backgroundColor: Colors.white,
+        elevation: 1,
+        iconTheme: IconThemeData(color: Colors.black),
+        titleTextStyle: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Torna alla schermata precedente
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddAnimalScreen()),
-          );
-        },
-        child: Icon(Icons.add),
-      ),
+      body: filteredAnimals.isNotEmpty
+          ? ListView.builder(
+              itemCount: filteredAnimals.length, // Numero di animali filtrati
+              itemBuilder: (context, index) {
+                final animal = filteredAnimals[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: animal['imageUrl'] != null
+                        ? NetworkImage(animal['imageUrl']!)
+                        : null,
+                    child: animal['imageUrl'] == null
+                        ? Icon(
+                            Icons.pets,
+                            color: Colors.grey[600],
+                          )
+                        : null,
+                  ),
+                  title: Text(animal['name'] ?? 'Senza nome'),
+                  onTap: () {
+                    // Azione quando clicchi su un animale (es. vai ai dettagli)
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AnimalDetailScreen(animal: animal),
+                      ),
+                    );
+                  },
+                );
+              },
+            )
+          : Center(
+              child: Text(
+                'Nessun animale trovato in questa categoria.',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ),
     );
   }
 }
 
-class AnimalCard extends StatelessWidget {
-  final String name;
-  final String imagePath;
-  final VoidCallback onTap;
+class AnimalDetailScreen extends StatelessWidget {
+  final Map<String, String?> animal;
 
-  const AnimalCard({
-    required this.name,
-    required this.imagePath,
-    required this.onTap,
-  });
+  AnimalDetailScreen({required this.animal});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                imagePath,
-                height: 100,
-                width: 100,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              name,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(animal['name'] ?? 'Dettaglio Animale'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+      ),
+      body: Center(
+        child: Text('Dettagli di ${animal['name']}'),
       ),
     );
   }

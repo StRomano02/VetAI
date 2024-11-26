@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/gradient_background.dart';
-import '../services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'vet_home_screen.dart';
 import 'client_home_screen.dart';
@@ -46,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Errore: Username o password non validi'),
+          content: Text('Errore: Email o password non validi'),
           backgroundColor: Colors.red,
         ),
       );
@@ -67,8 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xFFBBDEFB),
-                Color(0xFFE3F2FD),
+                Color.fromARGB(255, 255, 255, 255),
+                Color.fromARGB(255, 242, 242, 242),
               ],
             ),
           ),
@@ -88,7 +87,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
-
                   SizedBox(height: 20), // Spazio tra il bottone e il form
 
                   // Logo
@@ -104,32 +102,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black, // Cambia il colore in nero
                     ),
                   ),
                   SizedBox(height: 40),
 
-                  // Campo Username
-                  TextField(
+                  // Campo Username (Email)
+                  _buildTextField(
                     controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                    ),
+                    labelText: 'Email',
+                    icon: Icons.email,
                   ),
                   SizedBox(height: 20),
 
                   // Campo Password
-                  TextField(
+                  _buildTextField(
                     controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                    ),
+                    labelText: 'Password',
+                    icon: Icons.lock,
                     obscureText: true,
                   ),
                   SizedBox(height: 20),
@@ -154,6 +144,29 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData icon,
+    bool obscureText = false,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: Colors.grey[600]),
+        prefixIcon: Icon(icon, color: Colors.grey[600]),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.8),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
         ),
       ),
     );

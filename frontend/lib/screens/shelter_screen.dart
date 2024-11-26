@@ -119,15 +119,15 @@ class _ShelterPageState extends State<ShelterPage> {
                   children: [
                     // Bottone per i Cani
                     InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AnimalListPage(category: 'Cani'),
-                          ),
-                        );
-                      },
+                      // onTap: () {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) =>
+                      //           AnimalListPage(category: 'Cani'),
+                      //     ),
+                      //   );
+                      // },
                       child: Container(
                         height: 100,
                         width: 100,
@@ -167,15 +167,15 @@ class _ShelterPageState extends State<ShelterPage> {
 
                     // Bottone per i Gatti
                     InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AnimalListPage(category: 'Gatti'),
-                          ),
-                        );
-                      },
+                      // onTap: () {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) =>
+                      //           AnimalListPage(category: 'Gatti'),
+                      //     ),
+                      //   );
+                      // },
                       child: Container(
                         height: 100,
                         width: 100,
@@ -215,15 +215,15 @@ class _ShelterPageState extends State<ShelterPage> {
 
                     // Bottone per Altri Animali
                     InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AnimalListPage(category: 'Altri'),
-                          ),
-                        );
-                      },
+                      // onTap: () {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) =>
+                      //           AnimalListPage(category: 'Altri'),
+                      //     ),
+                      //   );
+                      // },
                       child: Container(
                         height: 100,
                         width: 100,

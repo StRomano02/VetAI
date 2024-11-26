@@ -2,28 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider extends ChangeNotifier {
-  String? _token;
-  Map<String, String>? _userData; // Dati del profilo utente
+  String? _token; // Token di autenticazione
+  Map<String, String>? _userData; // Dati utente: nome, cognome, email, ruolo
 
   String? get token => _token;
   Map<String, String>? get userData => _userData;
   bool get isAuthenticated => _token != null;
 
-  // Login dell'utente
-  Future<String> login(String username, String password) async {
-    // Simula una chiamata API al backend con username e password
-    if (username == "vet" && password == "password") {
+  // Login con email e password
+  Future<String> login(String email, String password) async {
+    // Simula una chiamata API per autenticazione
+    if (email == "vet@example.com" && password == "password") {
       _token = "mock_token_vet";
       _userData = {
-        'username': username,
-        'email': 'vet@example.com',
+        'nome': 'Mario',
+        'cognome': 'Rossi',
+        'email': email,
         'role': 'vet',
       };
-    } else if (username == "client" && password == "password") {
+    } else if (email == "client@example.com" && password == "password") {
       _token = "mock_token_client";
       _userData = {
-        'username': username,
-        'email': 'client@example.com',
+        'nome': 'Anna',
+        'cognome': 'Bianchi',
+        'email': email,
         'role': 'client',
       };
     } else {
@@ -33,7 +35,8 @@ class AuthProvider extends ChangeNotifier {
     // Salva il token e i dati utente nelle SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', _token!);
-    await prefs.setString('username', _userData!['username']!);
+    await prefs.setString('nome', _userData!['nome']!);
+    await prefs.setString('cognome', _userData!['cognome']!);
     await prefs.setString('email', _userData!['email']!);
     await prefs.setString('role', _userData!['role']!);
 
@@ -41,24 +44,25 @@ class AuthProvider extends ChangeNotifier {
     return _userData!['role']!; // Ritorna il ruolo dell'utente
   }
 
-  // Registrazione utente (simile al login)
-  // Aggiungi un nuovo parametro per il ruolo
-  Future<void> signUp(
-      String username, String email, String password, String role) async {
-    // Simula una chiamata API al backend per registrare l'utente
+  // Registrazione utente
+  Future<void> signUp(String nome, String cognome, String email,
+      String password, String role) async {
+    // Simula una chiamata API per registrare l'utente
     _token = "mock_token";
     _userData = {
-      'username': username,
+      'nome': nome,
+      'cognome': cognome,
       'email': email,
-      'role': role, // Memorizza il ruolo scelto
+      'role': role,
     };
 
     // Salva i dati nelle SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', _token!);
-    await prefs.setString('username', _userData!['username']!);
-    await prefs.setString('email', _userData!['email']!);
-    await prefs.setString('role', role); // Salva anche il ruolo
+    await prefs.setString('nome', nome);
+    await prefs.setString('cognome', cognome);
+    await prefs.setString('email', email);
+    await prefs.setString('role', role);
 
     notifyListeners();
   }
@@ -80,7 +84,8 @@ class AuthProvider extends ChangeNotifier {
     _token = prefs.getString('token');
     if (_token != null) {
       _userData = {
-        'username': prefs.getString('username')!,
+        'nome': prefs.getString('nome')!,
+        'cognome': prefs.getString('cognome')!,
         'email': prefs.getString('email')!,
         'role': prefs.getString('role')!,
       };

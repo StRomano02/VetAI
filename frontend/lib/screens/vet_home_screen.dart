@@ -1,232 +1,328 @@
 import 'package:flutter/material.dart';
-import 'shelter_screen.dart';
-import 'profile_screen.dart';
-import 'settings_screen.dart';
-import '../widgets/gradient_background.dart';
-import '../providers/auth_provider.dart';
-import 'package:provider/provider.dart';
+import 'animal_list_screen.dart';
+import 'add_animal_screen.dart';
+import 'vet_profile_screen.dart';
+
+final List<Map<String, String?>> animals = [
+  {'name': 'Shaky', 'status': 'In cerca di casa', 'category': 'Cani'},
+  {'name': 'Sophie', 'status': 'In cura', 'category': 'Gatti'},
+  {'name': 'Squalo', 'status': 'In cerca di casa', 'category': 'Altri'},
+  {'name': 'Tosca', 'status': 'In cura', 'category': 'Cani'},
+  {'name': 'Domi', 'status': 'In cerca di casa', 'category': 'Gatti'},
+];
 
 class VetHomeScreen extends StatefulWidget {
   @override
   _VetHomeScreenState createState() => _VetHomeScreenState();
 }
 
-class _VetHomeScreenState extends State<VetHomeScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class _VetHomeScreenState extends State<VetHomeScreen> {
+  int _selectedIndex = 0; // Indice iniziale
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2), // Durata dell'animazione
-      vsync: this,
-    );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+  // Lista delle schermate
+  final List<Widget> _pages = [
+    VetHomeScreenContent(), // Schermata principale
+    ClinicPage(), // Placeholder per Clinica
+    MessagesPage(), // Placeholder per Messaggi
+    StorePage(), // Placeholder per Magazzino
+    ProfileScreen(), // Schermata Profilo
+  ];
 
-    _controller.forward(); // Avvia l'animazione
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index; // Cambia schermata
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'VetAI',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-              backgroundColor: Colors.transparent, // Per app bar trasparente
+      body: _pages[_selectedIndex], // Mostra la schermata selezionata
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped, // Cambia schermata al tocco
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pets),
+            label: 'Animali',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_hospital),
+            label: 'Clinica',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: 'Messaggi',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.store),
+            label: 'Magazzino',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profilo',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class VetHomeScreenContent extends StatelessWidget {
+  final List<String> _categories = [
+    'In cerca di casa',
+    'In cura',
+    'Cani',
+    'Gatti',
+    'Altri'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: Text(
+          'VetAI',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications, color: Colors.black),
+            onPressed: () {
+              // Azione per notifiche
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Barra di ricerca
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              onChanged: (value) {
+                // Logica per aggiornare la ricerca
+              },
+              decoration: InputDecoration(
+                hintText: 'Cerca un animale',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ),
-          centerTitle: true,
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
+          // Lista delle categorie
+          Expanded(
+            child: ListView(
+              children: _categories.map((category) {
+                return CategorySection(
+                  title: category,
+                  animals: animals.where((animal) {
+                    if (category == 'In cerca di casa' ||
+                        category == 'In cura') {
+                      return animal['status'] == category;
+                    } else {
+                      return animal['category'] == category;
+                    }
+                  }).toList(),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddAnimalScreen()),
+          );
+        },
+        backgroundColor: Colors.green,
+        child: Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+}
+
+// Schermate placeholder per altre sezioni
+class ClinicPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(child: Text('Clinica')),
+    );
+  }
+}
+
+class MessagesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(child: Text('Messaggi')),
+    );
+  }
+}
+
+class StorePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(child: Text('Magazzino')),
+    );
+  }
+}
+
+// Widget delle categorie
+class CategorySection extends StatelessWidget {
+  final String title;
+  final List<Map<String, String?>> animals;
+
+  CategorySection({required this.title, required this.animals});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Header del menu
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage:
-                          AssetImage('assets/images/profile_placeholder.png'),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Nome Utente',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'email@example.com',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
+              Text(
+                title,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-
-              // Voce per il profilo
-              ListTile(
-                leading: Icon(Icons.person),
-                title: Text('Profilo'),
-                onTap: () {
+              TextButton(
+                onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
+                    MaterialPageRoute(
+                      builder: (context) => AnimalListScreen(
+                        category: title,
+                        animals: animals,
+                      ),
+                    ),
                   );
                 },
-              ),
-
-              // Voce per le impostazioni
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Impostazioni'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
-                },
-              ),
-
-              // Logout
-              ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('Logout'),
-                onTap: () {
-                  Provider.of<AuthProvider>(context, listen: false).logout();
-                },
+                child: Text('Vedi tutto >'),
               ),
             ],
           ),
         ),
-        body: GradientBackground(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Logo del progetto
-                SizedBox(
-                  height: 200, // Altezza del logo
-                  child: Image.asset(
-                    'assets/images/logo.png', // Logo nella cartella assets
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Dashboard con barra di ricerca e bottone
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Barra di ricerca
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Inserisci il nome del rifugio',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.search),
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) {
-                            // Azione: Naviga alla pagina del rifugio cercato
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ShelterPage(shelterName: value),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                      SizedBox(height: 20),
-
-                      Center(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ShelterPage(
-                                      shelterName: 'Il tuo rifugio')),
-                            );
-                          },
-                          child: Container(
-                            height:
-                                120, // Altezza e larghezza per il formato quadrato
-                            width: 120,
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 30, 65,
-                                  130), // Un verde elegante che si abbina bene
-                              borderRadius: BorderRadius.circular(
-                                  16), // Angoli arrotondati
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3), // Ombra verso il basso
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.pets, // Icona a forma di zampa
-                                  color: Colors.white,
-                                  size: 50, // Dimensione più grande per l'icona
-                                ),
-                                SizedBox(
-                                    height: 8), // Spazio tra l'icona e il testo
-                                Text(
-                                  "Il tuo rifugio",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign
-                                      .center, // Allineamento al centro
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: SizedBox(
+            height: 150,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: animals.map((animal) {
+                return AnimalCard(
+                  name: animal['name']!,
+                  status: animal['status'],
+                );
+              }).toList(),
             ),
           ),
-        ));
+        ),
+        SizedBox(height: 20),
+      ],
+    );
+  }
+}
+
+// Widget per le card degli animali
+class AnimalCard extends StatelessWidget {
+  final String name;
+  final String? status;
+
+  AnimalCard({required this.name, this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 160,
+      margin: EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 110,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.pets,
+                    size: 50,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
+              if (status != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: status == "In cerca di casa"
+                          ? Colors.green
+                          : Colors.orange,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      status!,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              name,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

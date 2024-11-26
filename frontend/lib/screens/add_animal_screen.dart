@@ -11,10 +11,15 @@ class _AddAnimalScreenState extends State<AddAnimalScreen> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   String? _imagePath;
+  String? _selectedCategory;
+  String? _selectedStatus;
+
+  // Opzioni per categoria e stato
+  final List<String> categories = ['Cane', 'Gatto', 'Altro'];
+  final List<String> statuses = ['In Cerca di Casa', 'In Cura'];
 
   void _pickImage() async {
-    // Logica per selezionare un'immagine (usa librerie come image_picker)
-    // Per esempio: final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    // Logica per selezionare un'immagine
     setState(() {
       _imagePath =
           "path/to/selected/image.png"; // Sostituisci con il path reale
@@ -22,12 +27,18 @@ class _AddAnimalScreenState extends State<AddAnimalScreen> {
   }
 
   void _saveAnimal() {
-    if (_formKey.currentState!.validate()) {
-      // Salva i dati nel backend
+    if (_formKey.currentState!.validate() &&
+        _selectedCategory != null &&
+        _selectedStatus != null) {
+      // Logica per salvare i dati nel backend o aggiorna la lista di animali
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Animale aggiunto con successo!')),
       );
-      Navigator.pop(context);
+      Navigator.pop(context); // Torna alla schermata precedente
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Per favore, completa tutti i campi')),
+      );
     }
   }
 
@@ -35,19 +46,29 @@ class _AddAnimalScreenState extends State<AddAnimalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Aggiungi un nuovo animale'),
+        title: Text(
+          'Aggiungi un nuovo animale',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Campo per il nome
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nome'),
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Inserisci il nome';
@@ -55,26 +76,36 @@ class _AddAnimalScreenState extends State<AddAnimalScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 16),
 
               // Campo per l'età
               TextFormField(
                 controller: _ageController,
-                decoration: InputDecoration(labelText: 'Età'),
+                decoration: InputDecoration(
+                  labelText: 'Età',
+                  border: OutlineInputBorder(),
+                ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Inserisci l\'età';
                   }
+                  if (int.tryParse(value) == null) {
+                    return 'Inserisci un numero valido';
+                  }
                   return null;
                 },
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 16),
 
               // Campo per la descrizione
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Descrizione'),
+                decoration: InputDecoration(
+                  labelText: 'Descrizione',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Inserisci una descrizione';
@@ -82,7 +113,61 @@ class _AddAnimalScreenState extends State<AddAnimalScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 16),
+
+              // Dropdown per la categoria
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                decoration: InputDecoration(
+                  labelText: 'Categoria',
+                  border: OutlineInputBorder(),
+                ),
+                items: categories
+                    .map((category) => DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(category),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedCategory = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Seleziona una categoria';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+
+              // Dropdown per lo stato
+              DropdownButtonFormField<String>(
+                value: _selectedStatus,
+                decoration: InputDecoration(
+                  labelText: 'Stato',
+                  border: OutlineInputBorder(),
+                ),
+                items: statuses
+                    .map((status) => DropdownMenuItem<String>(
+                          value: status,
+                          child: Text(status),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedStatus = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Seleziona uno stato';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
 
               // Bottone per selezionare un'immagine
               Row(
@@ -91,6 +176,9 @@ class _AddAnimalScreenState extends State<AddAnimalScreen> {
                     onPressed: _pickImage,
                     icon: Icon(Icons.photo),
                     label: Text('Carica foto'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 140, 150, 141),
+                    ),
                   ),
                   SizedBox(width: 10),
                   if (_imagePath != null)
@@ -106,7 +194,17 @@ class _AddAnimalScreenState extends State<AddAnimalScreen> {
               Center(
                 child: ElevatedButton(
                   onPressed: _saveAnimal,
-                  child: Text('Salva'),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    backgroundColor: const Color.fromARGB(255, 21, 56, 23),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Salva',
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               ),
             ],

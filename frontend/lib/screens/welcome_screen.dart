@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'login_screen.dart';
 import 'signup_screen.dart';
 
@@ -7,16 +8,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFBBDEFB), // Blu chiaro
-              Color(0xFFE3F2FD), // Azzurro tenue
-            ],
-          ),
-        ),
+        color: Colors.white, // Sfondo bianco
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -35,8 +27,9 @@ class WelcomeScreen extends StatelessWidget {
                   'VetAI',
                   style: TextStyle(
                     fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontWeight: FontWeight.w700, // Cambia il peso del font
+                    color:
+                        Colors.black, // Cambiato il testo a nero per visibilità
                   ),
                 ),
                 SizedBox(height: 40),
@@ -56,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    'Login',
+                    'Accedi',
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
@@ -69,7 +62,7 @@ class WelcomeScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    side: BorderSide(color: Colors.white),
+                    side: BorderSide(color: Colors.black), // Bordo nero
                   ),
                   onPressed: () {
                     Navigator.push(
@@ -78,8 +71,8 @@ class WelcomeScreen extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    'Crea un profilo',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    'Crea un nuovo profilo',
+                    style: TextStyle(fontSize: 18, color: Colors.black),
                   ),
                 ),
               ],
