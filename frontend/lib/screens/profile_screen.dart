@@ -9,6 +9,7 @@ class UserProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5), // Sfondo grigio chiaro
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -21,11 +22,11 @@ class UserProfileScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 245, 245, 245),
+            color: const Color(0xFFF5F5F5), // Testo bianco/grigio chiaro
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 1, 1, 1),
-        elevation: 0,
+        backgroundColor: const Color(0xFF2C2C2C), // Grigio scuro per la barra
+        elevation: 1,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -33,7 +34,7 @@ class UserProfileScreen extends StatelessWidget {
           // Testata personalizzata
           Container(
             padding: EdgeInsets.symmetric(vertical: 40),
-            color: const Color.fromARGB(255, 192, 196, 201),
+            color: const Color(0xFFE0E0E0), // Grigio medio
             child: Column(
               children: [
                 // Immagine o icona del profilo
@@ -43,9 +44,9 @@ class UserProfileScreen extends StatelessWidget {
                       ? NetworkImage(profile.imageUrl!)
                       : null,
                   child: profile.imageUrl == null
-                      ? Icon(Icons.person, size: 50, color: Colors.white)
+                      ? Icon(Icons.person, size: 50, color: Colors.grey)
                       : null,
-                  backgroundColor: Colors.white.withOpacity(0.5),
+                  backgroundColor: Colors.white,
                 ),
                 SizedBox(height: 16),
                 // Nome dell'utente
@@ -54,7 +55,7 @@ class UserProfileScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: const Color(0xFF2C2C2C), // Grigio scuro
                   ),
                 ),
                 SizedBox(height: 8),
@@ -63,7 +64,7 @@ class UserProfileScreen extends StatelessWidget {
                   profile.email,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white.withOpacity(0.8),
+                    color: const Color(0xFF4F4F4F), // Grigio
                   ),
                 ),
               ],
@@ -76,7 +77,7 @@ class UserProfileScreen extends StatelessWidget {
               child: Column(
                 children: [
                   // Pulsante per modificare i dati
-                  ElevatedButton(
+                  OutlinedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -88,11 +89,17 @@ class UserProfileScreen extends StatelessWidget {
                     },
                     child: Text(
                       "Modifica Dati",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF2C2C2C), // Grigio scuro
+                      ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 114, 114, 114),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: const Color(0xFF2C2C2C), // Grigio scuro
+                        width: 2,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -140,6 +147,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5), // Sfondo grigio chiaro
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -152,11 +160,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 0, 0, 0),
+            color: const Color(0xFFF5F5F5), // Testo bianco
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 146, 147, 149),
-        elevation: 0,
+        backgroundColor: const Color(0xFF2C2C2C), // Grigio scuro per la barra
+        elevation: 1,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -165,7 +173,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           children: [
             Text(
               "Nome",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF2C2C2C), // Grigio scuro
+              ),
             ),
             SizedBox(height: 8),
             TextField(
@@ -178,7 +190,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             SizedBox(height: 16),
             Text(
               "Email",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF2C2C2C), // Grigio scuro
+              ),
             ),
             SizedBox(height: 8),
             TextField(
@@ -190,7 +206,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             SizedBox(height: 24),
             Center(
-              child: ElevatedButton(
+              child: OutlinedButton(
                 onPressed: () {
                   setState(() {
                     widget.profile.name = nameController.text;
@@ -200,10 +216,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
                 child: Text(
                   "Salva Modifiche",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF2C2C2C), // Grigio scuro
+                  ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 169, 171, 175),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: const Color(0xFF2C2C2C), // Grigio scuro
+                    width: 2,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

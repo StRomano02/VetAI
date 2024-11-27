@@ -1,228 +1,89 @@
 import 'package:flutter/material.dart';
-import 'shelter_screen.dart';
-import 'profile_screen.dart';
-import 'settings_screen.dart';
-import '../widgets/gradient_background.dart';
-import '../providers/auth_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:frontend/screens/welcome_screen.dart';
 
-class ClientHomeScreen extends StatefulWidget {
-  @override
-  _ClientHomeScreenState createState() => _ClientHomeScreenState();
-}
-
-class _ClientHomeScreenState extends State<ClientHomeScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2), // Durata dell'animazione
-      vsync: this,
-    );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
-
-    _controller.forward(); // Avvia l'animazione
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class ClientHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'VetAI',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-              backgroundColor: Colors.transparent, // Per app bar trasparente
-            ),
+      appBar: AppBar(
+        title: Text(
+          'VetAI',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Roboto',
           ),
-          centerTitle: true,
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              // Header del menu
-              DrawerHeader(
-                decoration: BoxDecoration(
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WelcomeScreen(),
+              ),
+            );
+          },
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icona principale
+            Icon(
+              Icons.construction, // Icona lavori in corso
+              size: 100,
+              color: Colors.orange,
+            ),
+            SizedBox(height: 20),
+            // Testo principale
+            Text(
+              'In Progress',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 10),
+            // Testo secondario
+            Text(
+              'Stiamo lavorando per migliorare questa pagina!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[700],
+              ),
+            ),
+            SizedBox(height: 30),
+            // Aggiunta di icone extra per un tocco estetico
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.build,
+                  size: 50,
                   color: Colors.blue,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage:
-                          AssetImage('assets/images/profile_placeholder.png'),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Nome Utente',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'email@example.com',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+                SizedBox(width: 20),
+                Icon(
+                  Icons.engineering,
+                  size: 50,
+                  color: Colors.green,
                 ),
-              ),
-
-              // Voce per il profilo
-              ListTile(
-                leading: Icon(Icons.person),
-                title: Text('Profilo'),
-                onTap: () {},
-              ),
-
-              // Voce per le impostazioni
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Impostazioni'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
-                },
-              ),
-
-              // Logout
-              ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('Logout'),
-                onTap: () {
-                  Provider.of<AuthProvider>(context, listen: false).logout();
-                },
-              ),
-            ],
-          ),
-        ),
-        body: GradientBackground(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Logo del progetto
-                SizedBox(
-                  height: 200, // Altezza del logo
-                  child: Image.asset(
-                    'assets/images/logo.png', // Logo nella cartella assets
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Dashboard con barra di ricerca e bottone
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Barra di ricerca
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Inserisci il nome del rifugio',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.search),
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) {
-                            // Azione: Naviga alla pagina del rifugio cercato
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ShelterPage(shelterName: value),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-
-                      SizedBox(height: 20),
-
-                      Center(
-                        // child: InkWell(
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (context) =>
-                        //               AnimalListPage(category: 'Cose')),
-                        //     );
-                        //   },
-                        child: Container(
-                          height:
-                              120, // Altezza e larghezza per il formato quadrato
-                          width: 120,
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 30, 65,
-                                130), // Un verde elegante che si abbina bene
-                            borderRadius:
-                                BorderRadius.circular(16), // Angoli arrotondati
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: Offset(0, 3), // Ombra verso il basso
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.pets, // Icona a forma di zampa
-                                color: Colors.white,
-                                size: 50, // Dimensione più grande per l'icona
-                              ),
-                              SizedBox(
-                                  height: 8), // Spazio tra l'icona e il testo
-                              Text(
-                                "I miei animali",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign:
-                                    TextAlign.center, // Allineamento al centro
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      //),
-                    ],
-                  ),
+                SizedBox(width: 20),
+                Icon(
+                  Icons.lightbulb,
+                  size: 50,
+                  color: Colors.yellow[700],
                 ),
               ],
             ),
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 }

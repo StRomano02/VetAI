@@ -5,6 +5,8 @@ import 'animal_detail_screen.dart';
 import 'chat_detail_screen.dart';
 import '../models/animal.dart';
 import '../models/chat.dart';
+import '../models/centre.dart';
+import 'vet_centre_screen.dart';
 
 class VetHomeScreen extends StatefulWidget {
   @override
@@ -18,8 +20,8 @@ class _VetHomeScreenState extends State<VetHomeScreen> {
     VetHomeScreenContent(),
     ClinicPage(),
     MessagesPage(),
-    StorePage(),
-    ProfileScreen(),
+    CenterPage(centre: exampleCentre),
+    VetProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -54,7 +56,7 @@ class _VetHomeScreenState extends State<VetHomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.store),
-            label: 'Magazzino',
+            label: 'Struttura',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -431,15 +433,6 @@ class MessagesPage extends StatelessWidget {
   }
 }
 
-class StorePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text('Magazzino')),
-    );
-  }
-}
-
 class AnimalListPage extends StatelessWidget {
   final String category;
 
@@ -471,12 +464,6 @@ class AnimalListPage extends StatelessWidget {
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: Colors.black,
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
       ),
       body: filteredAnimals.isNotEmpty

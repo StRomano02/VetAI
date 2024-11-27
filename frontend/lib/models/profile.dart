@@ -13,8 +13,8 @@ class Profile {
 // Esempi di profili
 final List<Profile> exampleProfiles = [
   Profile(
-    name: "Luca Verdi",
-    email: "luca.verdi@example.com",
+    name: "Stefano Romano",
+    email: "stefano.romano02@outlook.com",
     imageUrl: "https://example.com/image1.jpg",
   ),
   Profile(

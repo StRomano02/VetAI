@@ -3,7 +3,7 @@ import 'profile_screen.dart';
 import '../models/profile.dart';
 import 'welcome_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class VetProfileScreen extends StatelessWidget {
   final Profile currentUser =
       exampleProfiles[0]; // Usa il primo profilo come utente corrente
 
