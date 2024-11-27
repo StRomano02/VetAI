@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SheltersConfig(AppConfig):
+class ChatsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'shelters'
+    name = 'chats'
