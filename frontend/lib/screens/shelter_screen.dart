@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'animal_list_screen.dart';
 
 class ShelterPage extends StatefulWidget {
   final String shelterName;

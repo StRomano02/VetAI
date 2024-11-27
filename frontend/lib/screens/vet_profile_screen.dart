@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'welcome_screen.dart'; // Assicurati di avere questa schermata nel tuo progetto
+import 'profile_screen.dart';
+import '../models/profile.dart';
+import 'welcome_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
+  final Profile currentUser =
+      exampleProfiles[0]; // Usa il primo profilo come utente corrente
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,46 +16,61 @@ class ProfileScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: const Color.fromARGB(255, 0, 0, 0),
           ),
         ),
-        backgroundColor: Colors.green,
+        backgroundColor: const Color.fromARGB(255, 188, 197, 188),
       ),
       body: ListView(
         children: [
-          // Sezione Profilo
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            color: Colors.grey[200],
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage(
-                      'assets/images/default_user.png'), // Sostituisci con il path della tua immagine
+          // Sezione Profilo (cliccabile)
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserProfileScreen(profile: currentUser),
                 ),
-                SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Nome Utente',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              color: Colors.grey[200],
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: currentUser.imageUrl != null
+                        ? NetworkImage(currentUser.imageUrl!)
+                        : null,
+                    child: currentUser.imageUrl == null
+                        ? Icon(Icons.person, size: 30, color: Colors.grey)
+                        : null,
+                    backgroundColor: Colors.grey[300],
+                  ),
+                  SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        currentUser.name,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'email@esempio.com',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      SizedBox(height: 4),
+                      Text(
+                        currentUser.email,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           // Divider
@@ -166,7 +186,7 @@ class ProfileOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: Colors.green),
+      leading: Icon(icon, color: const Color.fromARGB(255, 15, 35, 16)),
       title: Text(
         text,
         style: TextStyle(fontSize: 16),

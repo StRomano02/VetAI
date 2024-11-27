@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/animal.dart';
-import '../models/animal_data.dart';
 
 class AnimalDetailScreen extends StatelessWidget {
   static Animal getAnimalByName(String name) {
@@ -19,13 +18,8 @@ class AnimalDetailScreen extends StatelessWidget {
   AnimalDetailScreen({required this.animal});
 
   AnimalDetailScreen.byName({required String name})
-      : animal =
-            getAnimalByName(name) ?? // Se non trovato, usa un Animal fittizio
-                Animal(
-                  name: name,
-                  species: 'Specie sconosciuta',
-                  status: 'Status sconosciuto',
-                );
+      : animal = getAnimalByName(name);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

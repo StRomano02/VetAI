@@ -5,7 +5,6 @@ import 'settings_screen.dart';
 import '../widgets/gradient_background.dart';
 import '../providers/auth_provider.dart';
 import 'package:provider/provider.dart';
-import 'animal_list_screen.dart';
 
 class ClientHomeScreen extends StatefulWidget {
   @override
@@ -95,12 +94,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen>
               ListTile(
                 leading: Icon(Icons.person),
                 title: Text('Profilo'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
-                  );
-                },
+                onTap: () {},
               ),
 
               // Voce per le impostazioni

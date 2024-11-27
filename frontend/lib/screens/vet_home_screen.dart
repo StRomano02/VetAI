@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'animal_list_screen.dart';
 import 'add_animal_screen.dart';
 import 'vet_profile_screen.dart';
 import 'animal_detail_screen.dart';
+import 'chat_detail_screen.dart';
 import '../models/animal.dart';
-import '../models/animal_data.dart';
+import '../models/chat.dart';
 
 class VetHomeScreen extends StatefulWidget {
   @override
@@ -145,7 +145,7 @@ class VetHomeScreenContent extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            AnimalListScreen(category: category),
+                            AnimalListPage(category: category),
                       ),
                     );
                   },
@@ -310,28 +310,27 @@ class AnimalCard extends StatelessWidget {
                           ),
                         ),
                 ),
-                if (animal.status != null)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: animal.status == "In cerca di casa"
-                            ? Colors.green
-                            : Colors.orange,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        animal.status!,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: animal.status == "In cerca di casa"
+                          ? Colors.green
+                          : Colors.orange,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      animal.status,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
+                ),
               ],
             ),
             Padding(
@@ -395,7 +394,39 @@ class MessagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Messaggi')),
+      appBar: AppBar(
+        title: Text("Messaggi"),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+      ),
+      body: ListView.builder(
+        itemCount: exampleChats.length,
+        itemBuilder: (context, index) {
+          final chat = exampleChats[index];
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(chat.imageUrl),
+            ),
+            title: Text(
+              chat.name,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(chat.lastMessage),
+            trailing: Text(
+              "${chat.lastMessageTime.hour}:${chat.lastMessageTime.minute.toString().padLeft(2, '0')}",
+              style: TextStyle(color: Colors.grey),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatDetailScreen(chat: chat),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -405,6 +436,88 @@ class StorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(child: Text('Magazzino')),
+    );
+  }
+}
+
+class AnimalListPage extends StatelessWidget {
+  final String category;
+
+  AnimalListPage({required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    final filteredAnimals = exampleAnimals.where((animal) {
+      String mapSpeciesToCategory(String species) {
+        if (['Cane', 'Cagna'].contains(species)) return 'Cani';
+        if (['Gatto', 'Gattina'].contains(species)) return 'Gatti';
+        return 'Altri';
+      }
+
+      final bool isInStatusCategory = animal.status == category;
+      final bool isInSpeciesCategory =
+          mapSpeciesToCategory(animal.species) == category;
+
+      return isInStatusCategory || isInSpeciesCategory;
+    }).toList();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('$category'),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        iconTheme: IconThemeData(color: Colors.black),
+        titleTextStyle: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: filteredAnimals.isNotEmpty
+          ? Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Due colonne
+                  crossAxisSpacing: 16.0, // Spazi tra le colonne
+                  mainAxisSpacing: 16.0, // Spazi tra le righe
+                  childAspectRatio: 1.2, // Rapporto larghezza/altezza
+                ),
+                itemCount: filteredAnimals.length,
+                itemBuilder: (context, index) {
+                  final animal = filteredAnimals[index];
+                  return AnimalCard(animal: animal); // Usa il widget AnimalCard
+                },
+              ),
+            )
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Nessun animale trovato in questa categoria.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Logica per aggiungere un nuovo animale
+                    },
+                    icon: Icon(Icons.add),
+                    label: Text('Aggiungi Animale'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }
