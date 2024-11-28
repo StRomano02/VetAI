@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from .models import User
 from .serializers import UserSerializer
+from django.contrib.auth import authenticate
+
 
 class RegisterUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -11,7 +13,6 @@ class RegisterUserView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
                 
-        request.data['username'] = f"{request.data.get('name', '')}{request.data.get('surname', '')}".strip()        
         print("Dati ricevuti aggiornati:", request.data)
         serializer = self.get_serializer(data=request.data)
 
@@ -35,15 +36,19 @@ class RegisterUserView(generics.CreateAPIView):
 
 class LoginUserView(APIView):
     def post(self, request):
-        from django.contrib.auth import authenticate
-        username = request.data.get('username')
+        email = request.data.get('email')
         password = request.data.get('password')
-        user = authenticate(username=username, password=password)
+
+        # Autenticazione basata su email
+        user = authenticate(request, username=email, password=password)
         if user:
+            # Ottieni o crea un token per l'utente
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key, 'role': user.role})
+        
         return Response({'error': 'Invalid credentials'}, status=400)
-
+    
+    
 class ProfileView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

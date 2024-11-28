@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8000/api/users'));
+  final Dio _dio =
+      Dio(BaseOptions(baseUrl: 'http://192.168.1.39:8000/api/users'));
 
   String? _token;
   String? _role;
@@ -55,10 +56,10 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Metodo per effettuare il login
-  Future<String> login(String username, String password) async {
+  Future<String> login(String email, String password) async {
     try {
       final response = await _dio.post('/login/', data: {
-        'username': username,
+        'email': email,
         'password': password,
       });
 

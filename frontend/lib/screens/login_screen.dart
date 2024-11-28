@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/gradient_background.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'vet_home_screen.dart';
 import 'client_home_screen.dart';
 
@@ -13,7 +11,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
@@ -25,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       // Login tramite il provider
       final role = await Provider.of<AuthProvider>(context, listen: false)
-          .login(_usernameController.text, _passwordController.text);
+          .login(_emailController.text, _passwordController.text);
 
       // Naviga alla pagina appropriata in base al ruolo
       if (role == 'vet') {
@@ -114,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Campo Username (Email)
                   _buildTextField(
-                    controller: _usernameController,
+                    controller: _emailController,
                     labelText: 'Email',
                     icon: Icons.email,
                   ),

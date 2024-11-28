@@ -4,18 +4,19 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'image_url', 'password']
+        fields = ['id', 'name', 'surname', 'email', 'role', 'image_url', 'password']
         extra_kwargs = {
             'password': {'write_only': True},
-            'image_url': {'required': False, 'allow_null': True},  # Campo opzionale
+            'image_url': {'required': False, 'allow_null': True},
         }
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password'],
+            name=validated_data['name'],
+            surname=validated_data['surname'],
             role=validated_data['role'],
-            image_url=validated_data.get('image_url'),  # Usa il valore se presente
+            image_url=validated_data.get('image_url'),
         )
         return user
