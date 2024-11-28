@@ -5,7 +5,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'role', 'image_url', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'image_url': {'required': False, 'allow_null': True},  # Campo opzionale
+        }
 
     def create(self, validated_data):
         user = User.objects.create_user(
@@ -13,6 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password'],
             role=validated_data['role'],
-            image_url=validated_data.get('image_url'),
+            image_url=validated_data.get('image_url'),  # Usa il valore se presente
         )
         return user
