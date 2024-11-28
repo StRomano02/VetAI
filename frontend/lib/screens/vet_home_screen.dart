@@ -368,17 +368,26 @@ class ClinicPage extends StatelessWidget {
       body: animalsInCare.isNotEmpty
           ? Padding(
               padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Due colonne
-                  crossAxisSpacing: 16.0, // Spazi tra le colonne
-                  mainAxisSpacing: 16.0, // Spazi tra le righe
-                  childAspectRatio: 1.2, // Rapporto larghezza/altezza
-                ),
-                itemCount: animalsInCare.length,
-                itemBuilder: (context, index) {
-                  final animal = animalsInCare[index];
-                  return AnimalCard(animal: animal); // Usa il widget AnimalCard
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calcola il numero di colonne in base alla larghezza disponibile
+                  final crossAxisCount = (constraints.maxWidth / 150).floor();
+
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount:
+                          crossAxisCount, // Numero di colonne dinamico
+                      crossAxisSpacing: 12.0, // Spazi tra le colonne
+                      mainAxisSpacing: 12.0, // Spazi tra le righe
+                      childAspectRatio: 1, // Rapporto larghezza/altezza
+                    ),
+                    itemCount: animalsInCare.length,
+                    itemBuilder: (context, index) {
+                      final animal = animalsInCare[index];
+                      return AnimalCard(
+                          animal: animal); // Usa il widget AnimalCard
+                    },
+                  );
                 },
               ),
             )

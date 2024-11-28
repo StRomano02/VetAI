@@ -1,95 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/auth_service.dart';
 
-class AuthProvider extends ChangeNotifier {
-  String? _token; // Token di autenticazione
-  Map<String, String>? _userData; // Dati utente: nome, cognome, email, ruolo
+class AuthProvider with ChangeNotifier {
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8000/api/users'));
+
+  String? _token;
+  String? _role;
 
   String? get token => _token;
-  Map<String, String>? get userData => _userData;
+  String? get role => _role;
+
+  /// Getter per verificare se l'utente è autenticato
   bool get isAuthenticated => _token != null;
 
-  // Login con email e password
-  Future<String> login(String email, String password) async {
-    // Simula una chiamata API per autenticazione
-    if (email == "vet@example.com" && password == "password") {
-      _token = "mock_token_vet";
-      _userData = {
-        'nome': 'Mario',
-        'cognome': 'Rossi',
-        'email': email,
-        'role': 'vet',
-      };
-    } else if (email == "client@example.com" && password == "password") {
-      _token = "mock_token_client";
-      _userData = {
-        'nome': 'Anna',
-        'cognome': 'Bianchi',
-        'email': email,
-        'role': 'client',
-      };
-    } else {
-      throw Exception("Credenziali non valide");
+  /// Getter per ottenere i dati dell'utente (es. ruolo)
+  Map<String, String?>? get userData {
+    if (_role != null) {
+      return {'role': _role};
     }
-
-    // Salva il token e i dati utente nelle SharedPreferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', _token!);
-    await prefs.setString('nome', _userData!['nome']!);
-    await prefs.setString('cognome', _userData!['cognome']!);
-    await prefs.setString('email', _userData!['email']!);
-    await prefs.setString('role', _userData!['role']!);
-
-    notifyListeners();
-    return _userData!['role']!; // Ritorna il ruolo dell'utente
+    return null;
   }
 
-  // Registrazione utente
-  Future<void> signUp(String nome, String cognome, String email,
-      String password, String role) async {
-    // Simula una chiamata API per registrare l'utente
-    _token = "mock_token";
-    _userData = {
-      'nome': nome,
-      'cognome': cognome,
-      'email': email,
-      'role': role,
-    };
-
-    // Salva i dati nelle SharedPreferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', _token!);
-    await prefs.setString('nome', nome);
-    await prefs.setString('cognome', cognome);
-    await prefs.setString('email', email);
-    await prefs.setString('role', role);
-
-    notifyListeners();
-  }
-
-  // Logout
-  Future<void> logout() async {
-    _token = null;
-    _userData = null;
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-
-    notifyListeners();
-  }
-
-  // Controlla se l'utente è già loggato
+  /// Metodo per verificare lo stato di login
   Future<void> checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('token');
-    if (_token != null) {
-      _userData = {
-        'nome': prefs.getString('nome')!,
-        'cognome': prefs.getString('cognome')!,
-        'email': prefs.getString('email')!,
-        'role': prefs.getString('role')!,
-      };
+    try {
+      // Recupera token e ruolo da SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _token = prefs.getString('token');
+      _role = prefs.getString('role');
+
+      // Notifica eventuali listener se l'utente è autenticato
+      if (_token != null && _role != null) {
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Errore durante la verifica dello stato di login: $e');
     }
-    notifyListeners();
+  }
+
+  /// Metodo per registrare un utente
+  Future<void> signUp(String name, String surname, String email,
+      String password, String role) async {
+    try {
+      // Chiama il service per la registrazione
+      await AuthService.signUp(name, surname, email, password, role);
+
+      // Non è necessario aggiornare token/ruolo per ora. Questo avviene al login.
+      notifyListeners();
+    } catch (e) {
+      throw e; // Propaga l'errore per la gestione nel widget
+    }
+  }
+
+  /// Metodo per effettuare il login
+  Future<String> login(String username, String password) async {
+    try {
+      final response = await _dio.post('/login/', data: {
+        'username': username,
+        'password': password,
+      });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        // Salva il token e il ruolo nelle SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data['token']);
+        await prefs.setString('role', data['role']);
+
+        _token = data['token'];
+        _role = data['role'];
+
+        notifyListeners(); // Notifica eventuali listener
+        return data['role'];
+      } else {
+        throw Exception('Invalid credentials');
+      }
+    } on DioError catch (dioError) {
+      if (dioError.response != null) {
+        throw Exception(
+            dioError.response?.data['detail'] ?? 'Errore sconosciuto');
+      } else {
+        throw Exception('Network error: ${dioError.message}');
+      }
+    }
+  }
+
+  /// Metodo per effettuare il logout
+  Future<void> logout() async {
+    try {
+      // Rimuove token e ruolo dalle SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('token');
+      await prefs.remove('role');
+
+      _token = null;
+      _role = null;
+
+      notifyListeners(); // Notifica eventuali listener per aggiornare lo stato
+    } catch (e) {
+      print('Errore durante il logout: $e');
+    }
   }
 }

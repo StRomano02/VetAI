@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/gradient_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,19 +19,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() async {
     setState(() {
-      _isLoading = true;
+      _isLoading = true; // Mostra il caricamento
     });
+
     try {
-      // Login e ottieni il ruolo
+      // Login tramite il provider
       final role = await Provider.of<AuthProvider>(context, listen: false)
           .login(_usernameController.text, _passwordController.text);
 
-      // Salva lo stato di login e il ruolo
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
-      await prefs.setString('userRole', role);
-
-      // Naviga alla home page specifica
+      // Naviga alla pagina appropriata in base al ruolo
       if (role == 'vet') {
         Navigator.pushReplacement(
           context,
@@ -42,16 +39,24 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (context) => ClientHomeScreen()),
         );
       }
-    } catch (error) {
+    } on Exception catch (e) {
+      // Gestione dettagliata degli errori
+      String errorMessage = 'Errore sconosciuto. Riprova più tardi.';
+      if (e.toString().contains('Invalid credentials')) {
+        errorMessage = 'Email o password non validi.';
+      } else if (e.toString().contains('Network')) {
+        errorMessage = 'Errore di rete. Controlla la tua connessione.';
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Errore: Email o password non validi'),
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
         ),
       );
     } finally {
       setState(() {
-        _isLoading = false;
+        _isLoading = false; // Nasconde il caricamento
       });
     }
   }

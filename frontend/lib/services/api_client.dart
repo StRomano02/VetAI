@@ -1,21 +1,32 @@
 import 'package:dio/dio.dart';
-
-const String baseUrl = "http://127.0.0.1:8000/api";
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
-  static Dio dio = Dio(
+  static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: Duration(milliseconds: 5000), // Timeout connessione
-      receiveTimeout: Duration(milliseconds: 3000), // Timeout risposta
+      baseUrl: "http://localhost:8000/api", // Cambia con il tuo URL
+      connectTimeout: Duration(milliseconds: 5000),
+      receiveTimeout: Duration(milliseconds: 5000),
+      headers: {
+        "Content-Type": "application/json",
+      },
     ),
   );
 
+  // Metodo POST
   static Future<Response> post(String path, Map<String, dynamic> data) async {
-    return await dio.post(path, data: data);
-  }
+    try {
+      // Aggiungi token di autenticazione se disponibile
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("token");
 
-  static Future<Response> get(String path) async {
-    return await dio.get(path);
+      if (token != null) {
+        _dio.options.headers["Authorization"] = "Token $token";
+      }
+
+      return await _dio.post(path, data: data);
+    } catch (e) {
+      rethrow; // Propaga l'errore per essere gestito a livello superiore
+    }
   }
 }

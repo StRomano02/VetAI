@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'animals',
-    'shelters',
-    'chat',
+    'centers',
+    'chats',
 ]
 
 MIDDLEWARE = [

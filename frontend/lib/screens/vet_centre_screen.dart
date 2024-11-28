@@ -28,22 +28,33 @@ class CenterPage extends StatelessWidget {
             // Immagine con gestione errori
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                centre.imageUrl,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 200,
-                  width: double.infinity,
-                  color: Colors.grey[300],
-                  child: Icon(
-                    Icons.local_hospital,
-                    size: 80,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ),
+              child: centre.imageUrl != null && centre.imageUrl!.isNotEmpty
+                  ? Image.network(
+                      centre.imageUrl!,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 200,
+                        width: double.infinity,
+                        color: Colors.grey[300],
+                        child: Icon(
+                          Icons.local_hospital,
+                          size: 80,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    )
+                  : Container(
+                      height: 200,
+                      width: double.infinity,
+                      color: Colors.grey[300],
+                      child: Icon(
+                        Icons.local_hospital,
+                        size: 80,
+                        color: Colors.grey[700],
+                      ),
+                    ),
             ),
             SizedBox(height: 20),
             // Card per i dettagli

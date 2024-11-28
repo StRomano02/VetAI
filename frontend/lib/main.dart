@@ -32,28 +32,27 @@ class MyApp extends StatelessWidget {
           secondary:
               Color(0xFF757575), // Grigio intermedio per pulsanti o dettagli
         ),
-        scaffoldBackgroundColor: Colors.white, // Sfondo bianco
-        cardColor: Colors.white, // Colore per le card o i contenitori
+        scaffoldBackgroundColor: Colors.white,
+        cardColor: Colors.white,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white, // Sfondo bianco per l'AppBar
+          backgroundColor: Colors.white,
           titleTextStyle: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF424242), // Grigio scuro per il testo dell'AppBar
+            color: Color(0xFF424242),
           ),
           iconTheme: IconThemeData(
-            color: Color(0xFF424242), // Colore delle icone dell'AppBar
+            color: Color(0xFF424242),
           ),
-          elevation: 0, // Rimuove l'ombra per un look piatto
+          elevation: 0,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor:
-                Color(0xFF757575), // Grigio intermedio per pulsanti
+            backgroundColor: Color(0xFF757575),
             foregroundColor: Colors.white,
             textStyle: TextStyle(fontSize: 18),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8), // Angoli arrotondati
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
         ),
@@ -61,17 +60,16 @@ class MyApp extends StatelessWidget {
           headlineMedium: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF424242), // Grigio scuro per titoli
+            color: Color(0xFF424242),
           ),
           bodyMedium: TextStyle(
             fontSize: 16,
-            color: Colors.black87, // Colore standard per il testo
+            color: Colors.black87,
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor:
-              Color(0xFFF5F5F5), // Grigio molto chiaro per i campi di input
+          fillColor: Color(0xFFF5F5F5),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: Color(0xFFBDBDBD)),
@@ -82,20 +80,26 @@ class MyApp extends StatelessWidget {
           hintStyle: TextStyle(color: Colors.grey),
         ),
       ),
-      home: Consumer<AuthProvider>(
-        builder: (context, auth, child) {
-          if (auth.isAuthenticated) {
-            // Controlla il ruolo salvato
-            final role = auth.userData?['role'];
-            if (role == 'vet') {
-              return VetHomeScreen(); // Home per il veterinario
-            } else if (role == 'client') {
-              return ClientHomeScreen(); // Home per il cliente
-            }
-          }
-          return WelcomeScreen(); // Utente non loggato
-        },
-      ),
+      home:
+          AuthenticationWrapper(), // Usa un widget dedicato per la logica di routing
     );
+  }
+}
+
+class AuthenticationWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
+
+    if (auth.isAuthenticated) {
+      // Controlla il ruolo salvato
+      final role = auth.userData?['role'];
+      if (role == 'vet') {
+        return VetHomeScreen(); // Home per il veterinario
+      } else if (role == 'client') {
+        return ClientHomeScreen(); // Home per il cliente
+      }
+    }
+    return WelcomeScreen(); // Utente non loggato
   }
 }

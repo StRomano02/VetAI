@@ -2,13 +2,13 @@ class Centre {
   final String name;
   final String address;
   final String phoneNumber;
-  final String imageUrl;
+  String? imageUrl;
 
   Centre({
     required this.name,
     required this.address,
     required this.phoneNumber,
-    required this.imageUrl,
+    this.imageUrl,
   });
 }
 
@@ -16,7 +16,7 @@ final Centre exampleCentre = Centre(
   name: "Ambulatorio Cimarosa",
   address: "Via Cimarosa Domenico, 37 80127 Napoli (NA)",
   phoneNumber: "081 5565933",
-  imageUrl: "https://via.placeholder.com/150",
+  imageUrl: null,
 );
 
 final List<Centre> sampleCentres = [

@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import Centre
+from .serializers import CentreSerializer
 
-# Create your views here.
+class CentreViewSet(viewsets.ModelViewSet):
+    queryset = Centre.objects.all()
+    serializer_class = CentreSerializer

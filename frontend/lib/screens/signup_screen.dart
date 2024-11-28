@@ -32,9 +32,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _signUp() async {
     setState(() {
-      _isLoading = true;
+      _isLoading = true; // Mostra il caricamento
     });
+
     try {
+      // Chiama il metodo signUp del provider
       await Provider.of<AuthProvider>(context, listen: false).signUp(
         _nameController.text,
         _surnameController.text,
@@ -43,6 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _selectedRole,
       );
 
+      // Naviga alla schermata di login o alla home dopo la registrazione
       if (_selectedRole == 'vet') {
         Navigator.pushReplacement(
           context,
@@ -55,6 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       }
     } catch (error) {
+      // Mostra un messaggio di errore
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Registrazione fallita: ${error.toString()}'),
@@ -63,7 +67,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
     } finally {
       setState(() {
-        _isLoading = false;
+        _isLoading = false; // Nasconde il caricamento
       });
     }
   }
