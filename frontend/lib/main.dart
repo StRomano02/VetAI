@@ -5,22 +5,48 @@ import 'screens/welcome_screen.dart';
 import 'screens/client_home_screen.dart';
 import 'screens/vet_home_screen.dart';
 
-void main() {
+// flutter run --dart-define=initialScreen=client
+// flutter run --dart-define=initialScreen=vet
+
+void main(List<String> args) {
+  const String initialScreen = String.fromEnvironment('initialScreen',
+      defaultValue: 'auth'); // Legge la variabile da --dart-define
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
             create: (_) =>
-                AuthProvider()..checkLoginStatus()), // Inizializza lo stato
+                AuthProvider()..checkLoginStatus()), // Mantieni AuthProvider
       ],
-      child: MyApp(),
+      child: MyApp(initialScreen: initialScreen), // Passa l'argomento
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  final String initialScreen;
+
+  MyApp({required this.initialScreen}); // Costruttore
+
   @override
   Widget build(BuildContext context) {
+    Widget homeWidget;
+
+    print('Initial Screen Argument: $initialScreen');
+
+    // Imposta lo screen iniziale in base al parametro
+    switch (initialScreen) {
+      case 'client':
+        homeWidget = ClientHomeScreen();
+        break;
+      case 'vet':
+        homeWidget = VetHomeScreen();
+        break;
+      default:
+        homeWidget = AuthenticationWrapper();
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'VetAI',
@@ -80,8 +106,7 @@ class MyApp extends StatelessWidget {
           hintStyle: TextStyle(color: Colors.grey),
         ),
       ),
-      home:
-          AuthenticationWrapper(), // Usa un widget dedicato per la logica di routing
+      home: homeWidget, // Usa un widget dedicato per la logica di routing
     );
   }
 }

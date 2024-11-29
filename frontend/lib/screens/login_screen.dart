@@ -16,6 +16,23 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   void _login() async {
+    final email = _emailController.text;
+
+    // Controlla se le credenziali corrispondono a quelle hardcoded
+    if (email == 'frocio') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => VetHomeScreen()),
+      );
+      return; // Esci dal metodo, evitando di eseguire il resto della logica
+    } else if (email == 'negro') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ClientHomeScreen()),
+      );
+      return; // Esci dal metodo
+    }
+
     setState(() {
       _isLoading = true; // Mostra il caricamento
     });
