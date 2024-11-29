@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/animal.dart';
+import 'edit_animal_screen.dart';
 
 class AnimalDetailScreen extends StatelessWidget {
   static Animal getAnimalByName(String name) {
@@ -26,6 +27,20 @@ class AnimalDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(animal.name),
         backgroundColor: const Color.fromARGB(255, 126, 138, 127),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              // Naviga alla schermata di modifica
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditAnimalScreen(animal: animal),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

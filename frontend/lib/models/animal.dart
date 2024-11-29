@@ -1,25 +1,27 @@
 class Animal {
-  final String name;
-  final String species;
-  final String status;
-  final String? breed;
-  final String? gender;
-  final String? birthDateOrAge;
-  final String? colorOrMarks;
-  final String? microchipNumber;
-  final String? currentWeight;
-  final String? ownerName;
-  final String? ownerContact;
-  final String? ownerAddress;
-  final List<String>? ownerAppointments;
-  final Map<String, dynamic>? medicalHistory;
-  final String? dietNotes;
-  final String? reproductionNotes;
-  final List<Map<String, String>>? prescribedDrugs;
-  final List<Map<String, String>>? diagnosticTests;
-  final String? photoUrl; // Nuovo campo per la foto
+  String? id;
+  String name;
+  String species;
+  String status;
+  String? breed;
+  String? gender;
+  String? birthDateOrAge;
+  String? colorOrMarks;
+  String? microchipNumber;
+  String? currentWeight;
+  String? ownerName;
+  String? ownerContact;
+  String? ownerAddress;
+  List<String>? ownerAppointments;
+  Map<String, dynamic>? medicalHistory;
+  String? dietNotes;
+  String? reproductionNotes;
+  List<Map<String, String>>? prescribedDrugs;
+  List<Map<String, String>>? diagnosticTests;
+  String? photoUrl; // Nuovo campo per la foto
 
   Animal({
+    this.id,
     required this.name,
     required this.species,
     required this.status,
