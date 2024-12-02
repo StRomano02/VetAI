@@ -19,13 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _emailController.text;
 
     // Controlla se le credenziali corrispondono a quelle hardcoded
-    if (email == 'frocio') {
+    if (email == 'vet@vetai.com') {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => VetHomeScreen()),
       );
       return; // Esci dal metodo, evitando di eseguire il resto della logica
-    } else if (email == 'negro') {
+    } else if (email == 'client@vetai.com') {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => ClientHomeScreen()),
